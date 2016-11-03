@@ -1,0 +1,37 @@
+{
+   "entries": [
+       {
+	  "category": "Novel", 
+	  "nominations": [
+	    [ { "title": "Ancillary Justice", "author": "Ann Lecklie", "publisher": "Orbit Books" }, 1 ],
+	    [ { "title": "Acllry Jstice", "author": "nn Lcklie", "publisher": "Orbit Hooks" }, 1 ],
+	    [ { "title": "cillary Jstice", "author": "Inn Lockley", "publisher": "Orbit" }, 1 ],
+	    [ { "title": "Capillary Injustice", "author": "MAnn Lecklie", "publisher": "" }, 1 ],
+	    [ { "title": "Anchorary Justis", "author": "Lecklie, Ann", "publisher": "Obituary Books" }, 1 ],
+	    [ { "title": "Apillary Justich", "author": "Lecklie", "publisher": "Books" }, 1 ],
+	    [ { "title": "Auxiliary Bastich", "author": "Ann", "publisher": "Orobit Books" }, 1 ],
+		[{"publisher": "", "title": "40,000 in gehenna", "author": "phantasia"}, 3], 
+		[{"publisher": "", "title": "across the sea of suns", "author": "benford, gregory"}, 4], 
+		[{"publisher": "timescape", "title": "against infinity", "author": "benford, gregory"}, 5]
+	  ]
+       },
+       {
+	  "category": "DramaticLong", 
+	  "nominations": [
+	    [ { "title": "Star Wars: The Force Awakens" }, 2 ],
+	    [ { "title": "SW Force Awakens"}, 2 ],
+	    [ { "title": "Frce Awokens"}, 2 ]
+	  ]
+       }, 
+	{
+	  "category": "novelette", 
+	  "nominations": [
+		[{"publisher": "heart of darkness, e", "title": "dancer in the flames", "author": "drake, david"}, 6], 
+		[{"publisher": "analog (jun)", "title": "blood music", "author": "bear"}, 7], 
+		[{"publisher": "", "title": "blued moon", "author": "willis, connie"}, 8]
+	   ]
+	}
+   ]
+}
+
+

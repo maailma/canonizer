@@ -51,16 +51,20 @@ Returns a potential canonization id for a single nomination. Any parameter can b
 ```
 { "canon_id": 23 }
 ```
-or 
-400 Bad Request
+```
+400 Bad Request (Malformed JSON in request)
+```
+
 
 ### `POST /train`
 
 Trains the canonizer with training data.
 
 #### Response
-
+```
 200 OK
+```
+
 
 ### `POST /add_train_data`
 - Parameters: `entries` (required), `category` (required), `nominations`(required), `category`, `title`, `author`, `publisher`, `set`, `editor`, `example`, id (required for each nomination)
@@ -84,14 +88,19 @@ Adds a set of nominations to training data
 ```
 
 #### Response
-200 OK on success
-400 Bad Request in case of malformed JSON parameters
+```
+200 OK
+```
+```
+400 Bad Request (Malformed JSON in request)
+```
+
 
 ### `POST /reset`
 
 Clears training data set and resets the canonizer.
 
 #### Response
-
+```
 200 OK 
-
+```

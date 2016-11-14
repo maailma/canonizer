@@ -1,8 +1,17 @@
 import json
 import classifier
+import pickle
+import os
 from bottle import post, request, response
 
+canonizer_save_file_path = "data/canonizer.obj"
+training_data_save_file_path = "data/train_data.json"
+
 c = classifier.HugoClassifier()
+
+if os.path.exists(canonizer_save_file_path):
+    canonizer_file = open(canonizer_save_file_path, "rw")
+    c = pickle.load(canonizer_file)
 
 @post('/canonize')
 def canonize_handler():
@@ -38,9 +47,21 @@ def canonize_handler():
 @post('/train')
 def train_handler():
     '''Trains the classifer'''
+
     global c
+    global canonizer_save_file_path
+    global training_data_save_file_path
+
+    with open(training_data_save_file_path) as f:
+        for line in f:
+            nominations = json.loads(line)
+            c.add_train_data(nominations)
 
     c.train_internal()
+
+    canonizer_file = open(canonizer_save_file_path, "w")
+    pickle.dump(c, canonizer_file)
+
     response.status = 200
     return
 
@@ -49,6 +70,7 @@ def add_train_data_handler():
     '''Adds a nomination to training set'''
 
     global c
+    global training_data_save_file_path
 
     try:
         try:
@@ -64,14 +86,22 @@ def add_train_data_handler():
         response.status = 400
         return
 
-    c.add_train_data(nominations)
+    train_file = open(training_data_save_file_path,"a+")
+    json.dump(nominations, train_file)
+    train_file.write('\n')
 
     response.status = 200
     return
 
 @post('/reset')
 def reset_handler():
-    '''Trains the canonizer'''
+    '''Resets the canonizer and removes save files'''
     global c
+    global canonizer_save_file_path
+    global training_data_save_file_path
+
+    os.remove(canonizer_save_file_path)
+    os.remove(training_data_save_file_path)
+
     c = classifier.HugoClassifier()
     return

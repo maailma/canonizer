@@ -1,6 +1,6 @@
 import json
 import random
-import classifier
+#import classifier
 
 category_encoding = ["novel", "novella", "novelette", "short story", "non-fiction", "dramatic presentation",
                      "pro editor", "pro artist", "semiprozine", "fanzine", "fan writer", "fan artist", "Campbell Award"]
@@ -44,7 +44,13 @@ def convert_json_entry_to_training_data(traindata, jsonentry):
 
     cat = train_entry['category']
     del train_entry['category']
-    cat = category_encoding[int(cat)-1]
+
+    if cat:
+        cat = category_encoding[int(cat) - 1]
+    else:
+        cat = 0
+
+
     trentry_canon = [train_entry, 0]
 
     for entry in traindata['entries']:
@@ -77,6 +83,8 @@ def convert_txt_to_json(input_file, output_file) :
                 entry[k] = str.strip(entry[k])
         json.dump(entry,outf)
         outf.write("\n")
+    outf.close()
+    inpf.close()
 
 def convert_json_file_to_nomination_file(input_file, output_file):
     """ Converts file of JSON entries into canonizer training data format """
@@ -91,6 +99,9 @@ def convert_json_file_to_nomination_file(input_file, output_file):
 
     print tr
     json.dump(tr, outf)
+
+    outf.close()
+    inpf.close()
 
 def pre_process_training_data(input_file, output_file):
     """ Assigns canonization IDs to training data set entries.
@@ -115,6 +126,9 @@ def pre_process_training_data(input_file, output_file):
 
     json.dump(json_input, outf)
 
+    outf.close()
+    inpf.close()
+
 def convert_hugo_1984_data_to_test_sets():
     """ Converts Hugo 1984 categorically sorted data into canonizer test and training data sets. """
     test_data = "TestData/txt_data/catsort.txt"
@@ -130,19 +144,53 @@ def split_nominations(input_file, first_output, second_output, probability) :
     second_file = open(second_output, "w")
     original_data = open(input_file, "r")
 
-    nominations = json.load(first_file);
-
-    set1 = {"entries": []}
-    set2 = {"entries": []}
-
-    # TODO: Split the entries between two sets
-
     for line in original_data:
         rnd = random.random()
         if rnd < probability:
             first_file.writelines(line)
         else:
             second_file.writelines(line)
+
+def split_categorized_nominations(input_file, training_data, test_data, probability):
+    """ Splits a JSON file nomination by nomination. Probability parameter determines the ratio of the split """
+    tr_file = open(training_data, "w")
+    tst_file = open(test_data, "w")
+    original_data = open(input_file, "r")
+
+    nominations = json.load(original_data);
+
+    for entry in nominations["entries"]:
+        category = entry["category"]
+
+        train_data = {"entries": []}
+        new_cat = {"category": category, "nominations":[] }
+
+        prev_nom = [{},0]
+
+        added_to_training = False
+        for nom in entry["nominations"]:
+
+            if prev_nom[1] != nom[1]:
+                added_to_training = False
+                prev_nom = nom
+            else:
+                if added_to_training:
+                    rnd = random.random()
+                    if rnd < probability:
+                        new_cat["nominations"].append(nom)
+                    else:
+                        nom[0]['category'] = category
+                        nomline = json.dumps(nom)
+                        tst_file.write(nomline)
+                        tst_file.write("\n")
+                else:
+                    added_to_training = True
+                    new_cat["nominations"].append(nom)
+
+        train_data["entries"].append(new_cat)
+        js = json.dumps(train_data)
+        tr_file.write(js)
+        tr_file.write("\n")
 
 def convert_hugo_1984_data_to_test_sets2():
     """ Converts Hugo 1984 categorically sorted data into canonizer test and training data sets. """
@@ -151,7 +199,7 @@ def convert_hugo_1984_data_to_test_sets2():
     convert_json_file_to_nomination_file("TestData/data.json", "TestData/nominations.json")
     pre_process_training_data("TestData/nominations.json", "TestData/nominations_classified.json")
 
-    split_nominations("TestData/nominations_classified.json", "TestData/training_data.json", "TestData/test_data.json", 0.1)
+    split_categorized_nominations("TestData/nominations_classified.json", "TestData/training_data.json", "TestData/test_data.json", 0.1)
 
 
 def run_tests():
@@ -173,3 +221,5 @@ def run_tests():
         ent['category'] = category_encoding[int(cat) - 1]
         print ent['title']
         print c.canonize(ent)
+
+convert_hugo_1984_data_to_test_sets2()

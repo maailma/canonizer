@@ -21,11 +21,6 @@ def canonize_handler():
     canon_id = [0]
     try:
         try:
-            for key, value in request.headers.iteritems():
-                print key+":"+value
-
-            print request.body.read()
-
             nomination = request.json
 
         except:
@@ -41,7 +36,6 @@ def canonize_handler():
         return
 
     response.headers['Content_type'] = 'application/json'
-    print canon_id
     return json.dumps({'canon_id': canon_id[0]})
 
 @post('/train')
@@ -96,12 +90,16 @@ def add_train_data_handler():
 @post('/reset')
 def reset_handler():
     '''Resets the canonizer and removes save files'''
+
     global c
     global canonizer_save_file_path
     global training_data_save_file_path
 
-    os.remove(canonizer_save_file_path)
-    os.remove(training_data_save_file_path)
+    if os.path.exists(canonizer_save_file_path):
+        os.remove(canonizer_save_file_path)
+
+    if os.path.exists(training_data_save_file_path):
+        os.remove(training_data_save_file_path)
 
     c = classifier.HugoClassifier()
     return
